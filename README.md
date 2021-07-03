@@ -17,11 +17,11 @@ pip3 install -r requirements.txt
 
 ## Inference
 
-You have to download the [pretrained models]() and put them in ``output/ckpt/LJSpeech/``.
+You have to download the [pretrained models](https://drive.google.com/drive/folders/1Pa7wNfmtt0VfWxFNA3xdChqLsYFTvYuA?usp=sharing) and put them in ``output/ckpt/LJSpeech/``.
 
 For English single-speaker TTS, run
 ```
-python3 synthesize.py --text "YOUR_DESIRED_TEXT" --restore_step 1000000 --mode single -p config/LJSpeech/preprocess.yaml -m config/LJSpeech/model.yaml -t config/LJSpeech/train.yaml
+python3 synthesize.py --text "YOUR_DESIRED_TEXT" --restore_step 600000 --mode single -p config/LJSpeech/preprocess.yaml -m config/LJSpeech/model.yaml -t config/LJSpeech/train.yaml
 ```
 The generated utterances will be put in ``output/result/``.
 
@@ -30,7 +30,7 @@ The generated utterances will be put in ``output/result/``.
 Batch inference is also supported, try
 
 ```
-python3 synthesize.py --source preprocessed_data/LJSpeech/val.txt --restore_step 1000000 --mode batch -p config/LJSpeech/preprocess.yaml -m config/LJSpeech/model.yaml -t config/LJSpeech/train.yaml
+python3 synthesize.py --source preprocessed_data/LJSpeech/val.txt --restore_step 600000 --mode batch -p config/LJSpeech/preprocess.yaml -m config/LJSpeech/model.yaml -t config/LJSpeech/train.yaml
 ```
 to synthesize all utterances in ``preprocessed_data/LJSpeech/val.txt``
 
@@ -39,7 +39,7 @@ The pitch/speaking rate of the synthesized utterances can be controlled by speci
 For example, one can increase the speaking rate by 20 % and decrease the pitch by 20 % by
 
 ```
-python3 synthesize.py --text "YOUR_DESIRED_TEXT" --restore_step 1000000 --mode single -p config/LJSpeech/preprocess.yaml -m config/LJSpeech/model.yaml -t config/LJSpeech/train.yaml --duration_control 0.8 --pitch_control 0.8
+python3 synthesize.py --text "YOUR_DESIRED_TEXT" --restore_step 600000 --mode single -p config/LJSpeech/preprocess.yaml -m config/LJSpeech/model.yaml -t config/LJSpeech/train.yaml --duration_control 0.8 --pitch_control 0.8
 ```
 
 # Training
@@ -97,14 +97,16 @@ tensorboard --logdir output/log/LJSpeech
 ```
 
 to serve TensorBoard on your localhost.
-<!-- The loss curves, synthesized mel-spectrograms, and audios are shown.
+The loss curves, synthesized mel-spectrograms, and audios are shown.
 
 ![](./img/tensorboard_loss.png)
 ![](./img/tensorboard_spec.png)
-![](./img/tensorboard_audio.png) -->
+![](./img/tensorboard_audio.png)
 
 # Implementation Issues
 
+- The current implementation and pre-trained model are using normalized pitch values. In my experiments, the pitch controllability is not dynamic with the proposed pitch shifts. You may set `normalization` to `False` in `./config/LJSpeech/preprocess.yaml` when you need to see more wide pitch range as the paper described.
+- Please note that the paper trained the model up to 1000k whereas the current implementation provides 600k pre-trained model.
 - Use **HiFi-GAN** instead of **VocGAN** for vocoding.
 
 # Citation
